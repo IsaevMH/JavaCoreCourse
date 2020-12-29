@@ -1,11 +1,13 @@
 package com.coursejavacore;
 
 import com.coursejavacore.homework2.interfaces.IAction;
+import com.coursejavacore.homework2.interfaces.IObstacle;
 import com.coursejavacore.homework2.models.*;
 
 import java.util.Random;
 
 public class MainApp {
+
 
     public static IAction[] creaturesInitialization()
     {
@@ -17,10 +19,10 @@ public class MainApp {
                 };
     }
 
-    public static Object[] obstraclesInitialization(int count)
+    public static IObstacle[] obstraclesInitialization(int count)
     {
         Random random = new Random();
-        Object[] obstacles = new Object[count];
+        IObstacle[] obstacles = new IObstacle[count];
         for (int i = 0; i < obstacles.length; i++)
             if (i % 2 == 0)
                 obstacles[i] = new Wall(random.nextInt(25));
@@ -29,22 +31,13 @@ public class MainApp {
         return obstacles;
     }
 
-    public static IAction[] creaturesPassObstacles(IAction[] creatures, Object[] obstacles)
+    public static IAction[] creaturesPassObstacles(IAction[] creatures, IObstacle[] obstacles)
     {
         for (int i = 0; i < obstacles.length; i++)
-            for (int j = 0; j < creatures.length; j++) {
-                if (creatures[j] != null) {
-                    if (obstacles[i] instanceof Wall) {
-                        var obstacleWeight = (Wall) obstacles[i];
-                        if (creatures[j].Jump(obstacleWeight.getWeight()) == false)
+            for (int j = 0; j < creatures.length; j++)
+                if (creatures[j] != null)
+                        if(!obstacles[i].isPassed(creatures[j]))
                             creatures[j] = null;
-                    } else {
-                        var distanceObstacle = (RunningTrack) obstacles[i];
-                        if (creatures[j].Run(distanceObstacle.getLength()) == false)
-                            creatures[j] = null;
-                    }
-                }
-            }
         return creatures;
     }
 
@@ -60,10 +53,10 @@ public class MainApp {
     public static IAction[] creaturesCompleteObstacles(int count, IAction[] creatures)
     {
         var names = new IAction[count];
+        var j = 0;
         for(int i = 0; i < creatures.length; i++)
             if(creatures[i] != null)
             {
-                var j = 0;
                 names[j] = creatures[i];
                 j++;
             }
@@ -74,7 +67,7 @@ public class MainApp {
     {
         for(int i = 0; i < creatures.length; i++)
             if(creatures.length > 0)
-                System.out.format("%s прошел(а) все испытания", ((Creature) creatures[i]).getName());
+                System.out.format("%s прошел(а) все испытания\n", creatures[i].toString());
             else
                 System.out.println("Победители отсутствуют");
     }
@@ -90,6 +83,7 @@ public class MainApp {
         var creaturesAfterObstacles = creaturesPassObstacles(creatures, obstacles);
         var countCreatures = countCreaturesCompletedObstracles(creaturesAfterObstacles);
         var nameCreatures = creaturesCompleteObstacles(countCreatures, creaturesAfterObstacles);
-        Display(nameCreatures);
+
+        Display(nameCreatures);  System.out.println();
     }
 }

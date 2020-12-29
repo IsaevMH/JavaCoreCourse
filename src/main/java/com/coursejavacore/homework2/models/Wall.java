@@ -1,13 +1,26 @@
 package com.coursejavacore.homework2.models;
 
-public class Wall {
-    protected int Weight;
+import com.coursejavacore.homework2.interfaces.IAction;
+import com.coursejavacore.homework2.interfaces.IObstacle;
+
+public class Wall implements IObstacle {
+    protected int weight;
 
     public Wall(int weight) {
-        Weight = weight;
+        this.weight = weight;
     }
 
     public int getWeight() {
-        return Weight;
+        return weight;
+    }
+
+    @Override
+    public boolean isPassed(IAction creature) {
+        if(creature.Jump(weight))
+        {
+            System.out.format("%s преодалел стену в высоту %d метров\n", creature.toString(), weight);
+            return true;
+        }
+        return false;
     }
 }
